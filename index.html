@@ -1,68 +1,1008 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maison Cloth — Tienda de Ropa</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VESTIRE — Tienda de Ropa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --cream-dark: #ede7d9;
+      --dark: #1a1a1a;
+      --accent: #c0392b;
+      --accent-hover: #a93226;
+      --mid: #6b6b6b;
+      --border: #ddd4c2;
+      --white: #fff;
+      --success: #27ae60;
+      --warning: #f39c12;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 3rem;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--dark);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--mid);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--dark); }
+    .nav-icons { display: flex; gap: 0.8rem; align-items: center; }
+    .nav-icons button {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.15rem; color: var(--dark);
+      position: relative; padding: 4px;
+      transition: opacity 0.2s;
+    }
+    .nav-icons button:hover { opacity: 0.6; }
+    #cart-badge {
+      position: absolute;
+      top: -2px; right: -4px;
+      background: var(--accent);
+      color: white;
+      font-size: 0.6rem;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 16px; height: 16px;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+
+    /* ===== BANNER ===== */
+    .hero-banner {
+      background: var(--dark);
+      color: var(--cream);
+      text-align: center;
+      padding: 5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,0.02) 60px,
+        rgba(255,255,255,0.02) 61px
+      );
+    }
+    .hero-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #c8a876;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+    }
+    .hero-title em { font-style: italic; color: #c8a876; }
+    .hero-sub {
+      font-size: 1rem;
+      color: #aaa;
+      max-width: 460px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+    .hero-cta {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      border: 1.5px solid var(--cream);
+      color: var(--cream);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s, color 0.2s;
+    }
+    .hero-cta:hover { background: var(--cream); color: var(--dark); }
+
+    /* ===== CATALOG VIEW ===== */
+    #catalog-view { animation: fadeIn 0.3s ease; }
+    #detail-view { display: none; animation: fadeIn 0.3s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .catalog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 3rem 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .catalog-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .catalog-meta { font-size: 0.85rem; color: var(--mid); }
+
+    .filter-bar {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0 3rem 1.5rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 0.45rem 1.2rem;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      border-radius: 2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--mid);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--dark);
+      border-color: var(--dark);
+      color: white;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 0 3rem 4rem;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+      border: 1px solid transparent;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+      border-color: var(--border);
+    }
+    .card-img-wrap {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      background: var(--cream-dark);
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .product-card:hover .card-img-wrap img { transform: scale(1.06); }
+
+    .card-badge {
+      position: absolute;
+      top: 0.8rem; left: 0.8rem;
+      background: var(--accent);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.25rem 0.6rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+    .card-badge.new { background: var(--dark); }
+
+    .card-wish {
+      position: absolute;
+      top: 0.8rem; right: 0.8rem;
+      width: 34px; height: 34px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      opacity: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .product-card:hover .card-wish { opacity: 1; }
+    .card-wish.active { background: var(--accent); color: white; opacity: 1; }
+
+    .card-body { padding: 1rem 1.1rem 1.2rem; }
+    .card-brand { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: 0.3rem; }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
+    .card-colors-row { display: flex; gap: 5px; margin-bottom: 0.7rem; }
+    .card-color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid rgba(0,0,0,0.1); }
+    .card-price-row { display: flex; align-items: baseline; gap: 0.6rem; }
+    .card-price { font-size: 1.05rem; font-weight: 700; }
+    .card-price-old { font-size: 0.85rem; text-decoration: line-through; color: var(--mid); }
+    .card-discount { font-size: 0.75rem; color: var(--accent); font-weight: 600; }
+    .card-btn {
+      display: block;
+      width: 100%;
+      margin-top: 0.9rem;
+      padding: 0.75rem;
+      background: var(--dark);
+      color: white;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .card-btn:hover { background: #333; }
+
+    /* ===== DETAIL VIEW ===== */
+    .breadcrumb {
+      padding: 1rem 3rem;
+      font-size: 0.8rem;
+      color: var(--mid);
+    }
+    .breadcrumb span { margin: 0 0.4rem; }
+    .breadcrumb a { color: var(--mid); text-decoration: none; cursor: pointer; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 3rem 5rem;
+    }
+
+    .gallery { display: flex; flex-direction: column; gap: 1rem; }
+    .main-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--cream-dark);
+      position: relative;
+    }
+    .main-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+    .main-image:hover img { transform: scale(1.03); }
+    .img-badge {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      background: var(--accent);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+    .thumbnails { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+    .thumb {
+      width: 72px; height: 92px;
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+      background: var(--cream-dark);
+      flex-shrink: 0;
+    }
+    .thumb.active { border-color: var(--dark); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .product-info { display: flex; flex-direction: column; gap: 1.4rem; padding-top: 0.5rem; }
+    .product-brand { font-size: 0.72rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--mid); font-weight: 500; }
+    .product-name { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 700; line-height: 1.15; }
+    .product-code { font-size: 0.78rem; color: var(--mid); }
+    .product-code span { font-weight: 600; color: var(--dark); }
+
+    .price-row { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .price-main { font-size: 2rem; font-weight: 700; }
+    .price-old { font-size: 1rem; text-decoration: line-through; color: var(--mid); }
+    .price-discount { font-size: 0.85rem; color: var(--accent); font-weight: 600; background: #fdecea; padding: 0.2rem 0.5rem; border-radius: 2px; }
+
+    .stock-info { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500; }
+    .stock-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+    .stock-dot.low { background: var(--warning); }
+    .stock-dot.out { background: var(--accent); }
+
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    .desc-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: var(--mid); font-weight: 600; }
+    .desc-text { font-size: 0.93rem; line-height: 1.75; color: #444; margin-top: 0.5rem; }
+
+    .size-section, .color-section { display: flex; flex-direction: column; gap: 0.6rem; }
+    .size-header { display: flex; justify-content: space-between; align-items: center; }
+    .size-header span, .color-label { font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .size-guide { font-size: 0.78rem; color: var(--mid); cursor: pointer; text-decoration: underline; }
+    .sizes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .size-btn {
+      padding: 0.5rem 1.1rem;
+      border: 1.5px solid var(--border);
+      background: white;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 3px;
+      transition: all 0.15s;
+      color: var(--dark);
+    }
+    .size-btn:hover { border-color: var(--dark); }
+    .size-btn.selected { background: var(--dark); color: white; border-color: var(--dark); }
+    .size-btn.disabled { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+
+    .colors { display: flex; gap: 0.6rem; }
+    .color-swatch {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      outline: 2px solid transparent;
+      transition: outline 0.15s;
+    }
+    .color-swatch.selected { outline: 2px solid var(--dark); outline-offset: 3px; }
+
+    .qty-row { display: flex; align-items: center; gap: 1rem; }
+    .qty-label { font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 36px; height: 36px;
+      background: white; border: none;
+      cursor: pointer; font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s; color: var(--dark);
+    }
+    .qty-btn:hover { background: var(--cream); }
+    .qty-value {
+      width: 44px;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 0.4rem 0;
+      background: white;
+    }
+
+    .cta-group { display: flex; gap: 0.8rem; }
+    .btn-add {
+      flex: 1;
+      padding: 1rem;
+      background: var(--dark);
+      color: white;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.2s;
+    }
+    .btn-add:hover { background: #333; }
+    .btn-wish-detail {
+      width: 52px; height: 52px;
+      border: 1.5px solid var(--border);
+      background: white;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-wish-detail:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-wish-detail.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+    .delivery-info {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .delivery-row { display: flex; align-items: center; gap: 0.7rem; font-size: 0.85rem; color: var(--mid); }
+    .delivery-row strong { color: var(--dark); }
+    .delivery-icon { font-size: 1rem; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      background: var(--dark);
+      color: white;
+      padding: 0.9rem 1.5rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      z-index: 999;
+      pointer-events: none;
+      max-width: 300px;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--dark);
+      color: #aaa;
+      padding: 3rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2rem;
+    }
+    .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); margin-bottom: 0.8rem; }
+    .footer-tagline { font-size: 0.85rem; line-height: 1.6; max-width: 220px; }
+    .footer-col h4 { font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--white); margin-bottom: 1rem; font-weight: 600; }
+    .footer-col a { display: block; font-size: 0.85rem; color: #888; text-decoration: none; margin-bottom: 0.5rem; transition: color 0.2s; cursor: pointer; }
+    .footer-col a:hover { color: #ccc; }
+    .footer-bottom { background: #111; color: #666; text-align: center; padding: 1rem; font-size: 0.8rem; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero-banner { padding: 3.5rem 1.5rem; }
+      .catalog-header, .filter-bar { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .product-grid { padding: 0 1.5rem 3rem; }
+      .breadcrumb { padding: 0.8rem 1.5rem; }
+      .product-container { grid-template-columns: 1fr; gap: 1.5rem; padding: 0 1.5rem 3rem; }
+      footer { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; padding: 0 1rem 2rem; }
+      .catalog-header { padding: 1.5rem 1rem 0.8rem; }
+      .filter-bar { padding: 0 1rem 1rem; }
+      footer { grid-template-columns: 1fr; padding: 2rem 1.5rem; }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="store">
+<nav>
+  <a class="nav-logo" onclick="showCatalog()">VESTIRE</a>
+  <ul class="nav-links">
+    <li><a onclick="filterCat('Mujer')" class="active" id="link-mujer">Mujer</a></li>
+    <li><a onclick="filterCat('Hombre')" id="link-hombre">Hombre</a></li>
+    <li><a onclick="filterCat('Unisex')" id="link-unisex">Unisex</a></li>
+    <li><a onclick="filterCat('Ofertas')" id="link-ofertas">Ofertas</a></li>
+  </ul>
+  <div class="nav-icons">
+    <button title="Buscar">🔍</button>
+    <button title="Favoritos">♡</button>
+    <button title="Carrito" style="position:relative;" onclick="showToast('Carrito: ' + cartCount + ' producto(s)')">
+      🛍
+      <span id="cart-badge">0</span>
+    </button>
+  </div>
+</nav>
 
-    <!-- HEADER -->
-    <header class="hero">
-      <div>
-        <div class="brand">Maison <span>Cloth</span></div>
-        <div class="tagline">Colección Actual · Buenos Aires</div>
-      </div>
-      <div class="tagline">Moda · Estilo · Elegancia</div>
-    </header>
+<!-- ===== CATALOG VIEW ===== -->
+<div id="catalog-view">
 
-    <!-- NAV CATEGORÍAS -->
-    <nav class="nav" id="nav">
-      <button class="nav-btn active" data-cat="all">Todo</button>
-      <button class="nav-btn" data-cat="women's clothing">Mujer</button>
-      <button class="nav-btn" data-cat="men's clothing">Hombre</button>
-      <button class="nav-btn" data-cat="jewelery">Joyería</button>
-      <button class="nav-btn" data-cat="electronics">Accesorios Tech</button>
-    </nav>
-
-    <!-- SECCIÓN DE PRODUCTOS -->
-    <section class="products-section">
-      <div class="section-header">
-        <div class="section-title" id="section-title">Toda la Colección</div>
-        <div class="count" id="count"></div>
-      </div>
-
-      <!-- Grilla / Loading / Error se inyectan aquí -->
-      <div id="product-area">
-        <div class="loading">
-          <div class="spinner"></div>
-          <div class="loading-text">Cargando colección</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BARRA DEL CARRITO -->
-    <div class="cart-bar">
-      <div class="cart-info" id="cart-info">Carrito vacío</div>
-      <button class="cart-btn" id="cart-btn">
-        Ver carrito 🛍
-      </button>
-    </div>
-
+  <div class="hero-banner">
+    <p class="hero-tagline">Colección Otoño — Invierno 2026</p>
+    <h1 class="hero-title">Vestís con <em>propósito.</em></h1>
+    <p class="hero-sub">Prendas diseñadas para durar. Materiales cuidados, cortes que te acompañan, estilo que no caduca.</p>
+    <button class="hero-cta" onclick="document.getElementById('catalog-grid').scrollIntoView({behavior:'smooth'})">Ver Colección</button>
   </div>
 
-  <!-- MODAL (se inyecta dinámicamente) -->
-  <div id="modal-area"></div>
+  <div id="catalog-grid">
+    <div class="catalog-header">
+      <div>
+        <h2 class="catalog-title">Catálogo de Temporada</h2>
+        <p class="catalog-meta" id="product-count">Mostrando todos los productos</p>
+      </div>
+    </div>
 
-  <!-- TOAST (se inyecta dinámicamente) -->
-  <div id="toast-area"></div>
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" onclick="applyFilter(this, 'todos')">Todos</button>
+      <button class="filter-btn" onclick="applyFilter(this, 'Mujer')">Mujer</button>
+      <button class="filter-btn" onclick="applyFilter(this, 'Hombre')">Hombre</button>
+      <button class="filter-btn" onclick="applyFilter(this, 'Unisex')">Unisex</button>
+      <button class="filter-btn" onclick="applyFilter(this, 'oferta')">En Oferta</button>
+    </div>
 
-  <script src="app.js"></script>
+    <div class="product-grid" id="product-grid"></div>
+  </div>
+
+</div>
+
+<!-- ===== DETAIL VIEW ===== -->
+<div id="detail-view">
+  <div class="breadcrumb">
+    <a onclick="showCatalog()">Inicio</a><span>›</span>
+    <a onclick="showCatalog()">Catálogo</a><span>›</span>
+    <span id="bc-name">Producto</span>
+  </div>
+
+  <div class="product-container">
+    <div class="gallery">
+      <div class="main-image">
+        <span class="img-badge" id="detail-badge">-20%</span>
+        <img id="main-img" src="" alt="Producto"/>
+      </div>
+      <div class="thumbnails" id="thumb-row"></div>
+    </div>
+
+    <div class="product-info">
+      <div class="product-brand" id="d-brand">VESTIRE — Colección Otoño 2026</div>
+      <h1 class="product-name" id="d-name">Nombre del producto</h1>
+      <p class="product-code">Código: <span id="d-code">XXX-0000</span></p>
+
+      <div class="price-row">
+        <span class="price-main" id="d-price">$0</span>
+        <span class="price-old" id="d-old"></span>
+        <span class="price-discount" id="d-disc"></span>
+      </div>
+
+      <div class="stock-info">
+        <div class="stock-dot" id="d-stock-dot"></div>
+        <span id="d-stock">Stock disponible</span>
+      </div>
+
+      <hr class="divider"/>
+
+      <div>
+        <p class="desc-label">Descripción</p>
+        <p class="desc-text" id="d-desc">Descripción del producto.</p>
+      </div>
+
+      <div class="color-section">
+        <span class="color-label">Color: <span id="selected-color" style="font-weight:400;text-transform:none;letter-spacing:0">—</span></span>
+        <div class="colors" id="d-colors"></div>
+      </div>
+
+      <div class="size-section">
+        <div class="size-header">
+          <span>Talle</span>
+          <span class="size-guide" onclick="showToast('S → busto 86cm | M → busto 92cm | L → busto 98cm | XL → busto 104cm')">Guía de talles</span>
+        </div>
+        <div class="sizes" id="d-sizes"></div>
+      </div>
+
+      <div class="qty-row">
+        <span class="qty-label">Cantidad</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-value" id="qty">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+
+      <div class="delivery-info">
+        <div class="delivery-row"><span class="delivery-icon">🚚</span> <span><strong>Envío gratis</strong> a todo el país en compras +$30.000</span></div>
+        <div class="delivery-row"><span class="delivery-icon">↩️</span> <span><strong>Devolución gratuita</strong> dentro de los 30 días</span></div>
+        <div class="delivery-row"><span class="delivery-icon">🔒</span> <span><strong>Pago seguro</strong> — Mercado Pago & tarjetas</span></div>
+      </div>
+
+      <div class="cta-group">
+        <button class="btn-add" onclick="addToCart()">🛍 Agregar al carrito</button>
+        <button class="btn-wish-detail" id="wish-btn-detail" title="Favoritos" onclick="toggleWishDetail()">♡</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <p class="footer-brand">VESTIRE</p>
+    <p class="footer-tagline">Moda consciente. Diseño argentino. Prendas que hablan por vos.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Tienda</h4>
+    <a>Novedades</a>
+    <a>Mujer</a>
+    <a>Hombre</a>
+    <a>Accesorios</a>
+    <a>Ofertas</a>
+  </div>
+  <div class="footer-col">
+    <h4>Ayuda</h4>
+    <a>Mi cuenta</a>
+    <a>Seguir pedido</a>
+    <a>Cambios y devoluciones</a>
+    <a>Preguntas frecuentes</a>
+  </div>
+  <div class="footer-col">
+    <h4>Empresa</h4>
+    <a>Sobre VESTIRE</a>
+    <a>Sustentabilidad</a>
+    <a>Trabaja con nosotros</a>
+    <a>Contacto</a>
+  </div>
+</footer>
+<div class="footer-bottom">© 2026 VESTIRE — Todos los derechos reservados</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ===== DATOS =====
+  const productos = [
+    {
+      id: 1, nombre: "Remera Oversize Básica", marca: "VESTIRE Basics", categoria: "Unisex",
+      precio: 15000, precioOriginal: null, descuento: null,
+      talles: ["XS","S","M","L","XL"], stock: 24,
+      colores: [{ nombre:"Blanco", hex:"#f0ede6" }, { nombre:"Negro", hex:"#1a1a1a" }, { nombre:"Gris", hex:"#9e9e9e" }],
+      imagen: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=80",
+        "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=700&q=80",
+        "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=700&q=80"
+      ],
+      descripcion: "Remera de corte oversize en algodón peinado 100%. Cuello redondo amplio, costuras reforzadas y peso medio que otorga caída natural. Versátil para cualquier combinación del día a día.",
+      badge: null, badgeType: "new"
+    },
+    {
+      id: 2, nombre: "Pantalón Cargo Wide Leg", marca: "VESTIRE Street", categoria: "Mujer",
+      precio: 32000, precioOriginal: null, descuento: null,
+      talles: ["38","40","42","44","46"], stock: 12,
+      colores: [{ nombre:"Verde Militar", hex:"#556b2f" }, { nombre:"Negro", hex:"#1a1a1a" }, { nombre:"Beige", hex:"#c8b89a" }],
+      imagen: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=80",
+        "https://images.unsplash.com/photo-1594938298603-c8148c4b4c1c?w=700&q=80",
+        "https://images.unsplash.com/photo-1548690312-e3b507d8c110?w=700&q=80"
+      ],
+      descripcion: "Pantalón cargo de corte wide leg con bolsillos laterales tipo cargo. Cintura elástica con cordón regulable. Tela gabardina de alta resistencia con caída fluida.",
+      badge: null, badgeType: null
+    },
+    {
+      id: 3, nombre: "Buzo Hoodie con Capucha", marca: "VESTIRE Sport", categoria: "Unisex",
+      precio: 28000, precioOriginal: null, descuento: null,
+      talles: ["S","M","L","XL","XXL"], stock: 5,
+      colores: [{ nombre:"Azul Marino", hex:"#1a237e" }, { nombre:"Bordo", hex:"#7b1c3e" }, { nombre:"Verde Musgo", hex:"#4a5c3a" }],
+      imagen: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=700&q=80",
+        "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=700&q=80",
+        "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=700&q=80"
+      ],
+      descripcion: "Buzo hoodie unisex en felpa francesa 320g. Capucha doble con cordón, bolsillo canguro y puños acanalados. Calidad premium para el invierno.",
+      badge: null, badgeType: null
+    },
+    {
+      id: 4, nombre: "Blazer Oversize Camel", marca: "VESTIRE Formal", categoria: "Mujer",
+      precio: 42999, precioOriginal: 53999, descuento: 20,
+      talles: ["S","M","L"], stock: 8,
+      colores: [{ nombre:"Camel", hex:"#c8a876" }, { nombre:"Negro", hex:"#2c2c2c" }, { nombre:"Chocolate", hex:"#8b7355" }],
+      imagen: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=700&q=80",
+        "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=700&q=80",
+        "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=700&q=80"
+      ],
+      descripcion: "Blazer oversize de corte estructurado en tono camel. Confeccionado en tela tipo paño con forro interior. Dos bolsillos delanteros, solapa amplia y cierre con botón central. Acabados premium.",
+      badge: "-20%", badgeType: "oferta"
+    },
+    {
+      id: 5, nombre: "Vestido Midi Floral", marca: "VESTIRE Primavera", categoria: "Mujer",
+      precio: 36500, precioOriginal: 45000, descuento: 19,
+      talles: ["XS","S","M","L"], stock: 3,
+      colores: [{ nombre:"Flores Tierra", hex:"#c8956c" }, { nombre:"Flores Azul", hex:"#7b9eb5" }],
+      imagen: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=700&q=80",
+        "https://images.unsplash.com/photo-1496217590455-aa63a8350eea?w=700&q=80",
+        "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=700&q=80"
+      ],
+      descripcion: "Vestido midi de escote en V con estampado floral. Tela creppe fluida con forro interior. Manga larga y abertura lateral discreta. Fácil de combinar para el día o la noche.",
+      badge: "-19%", badgeType: "oferta"
+    },
+    {
+      id: 6, nombre: "Jean Straight Fit", marca: "VESTIRE Denim", categoria: "Hombre",
+      precio: 38000, precioOriginal: null, descuento: null,
+      talles: ["28","30","32","34","36","38"], stock: 20,
+      colores: [{ nombre:"Índigo", hex:"#2c3e6b" }, { nombre:"Claro", hex:"#a8c0d6" }, { nombre:"Negro", hex:"#1a1a1a" }],
+      imagen: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1542272604-787c3835535d?w=700&q=80",
+        "https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=700&q=80",
+        "https://images.unsplash.com/photo-1582552938357-32b906df40cb?w=700&q=80"
+      ],
+      descripcion: "Jean de corte straight con cintura media. Denim 12oz de algodón con 2% elastano para mayor comodidad de movimiento. Lavado índigo clásico, 5 bolsillos y cierre con botones.",
+      badge: null, badgeType: null
+    },
+    {
+      id: 7, nombre: "Camisa Lino Oversize", marca: "VESTIRE Resort", categoria: "Hombre",
+      precio: 22000, precioOriginal: null, descuento: null,
+      talles: ["S","M","L","XL"], stock: 15,
+      colores: [{ nombre:"Blanco Roto", hex:"#f0e8d8" }, { nombre:"Arena", hex:"#c8b49a" }, { nombre:"Azul Cielo", hex:"#9db8d0" }],
+      imagen: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=700&q=80",
+        "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=700&q=80",
+        "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=700&q=80"
+      ],
+      descripcion: "Camisa oversize 100% lino lavado. Cuello italiano, bolsillo de parche en pecho y dobladillo recto irregular. Perfecta para los días de calor o como capa liviana.",
+      badge: null, badgeType: null
+    },
+    {
+      id: 8, nombre: "Tapado Largo Doble Faz", marca: "VESTIRE Winter", categoria: "Mujer",
+      precio: 89000, precioOriginal: 112000, descuento: 21,
+      talles: ["S","M","L"], stock: 4,
+      colores: [{ nombre:"Camel", hex:"#c8a876" }, { nombre:"Gris Oxford", hex:"#7a7a7a" }],
+      imagen: "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=700&q=80",
+      imagenes: [
+        "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=700&q=80",
+        "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=700&q=80",
+        "https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=700&q=80"
+      ],
+      descripcion: "Tapado largo doble faz reversible en paño importado. Corte recto, bolsillos laterales ocultos y cierre con botón nácar. Una inversión de moda que dura décadas.",
+      badge: "-21%", badgeType: "oferta"
+    }
+  ];
+
+  // ===== ESTADO =====
+  let cartCount = 0;
+  let qty = 1;
+  let currentProduct = null;
+  let wished = {};
+  let wishedDetail = false;
+  let currentFilter = 'todos';
+
+  // ===== RENDER CATÁLOGO =====
+  function renderGrid(filter) {
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = '';
+    const filtered = filter === 'todos' ? productos
+      : filter === 'oferta' ? productos.filter(p => p.descuento)
+      : productos.filter(p => p.categoria === filter);
+
+    document.getElementById('product-count').textContent =
+      filtered.length === productos.length
+        ? `Mostrando todos los productos (${productos.length})`
+        : `${filtered.length} producto${filtered.length !== 1 ? 's' : ''} encontrado${filtered.length !== 1 ? 's' : ''}`;
+
+    filtered.forEach(p => {
+      const isWished = !!wished[p.id];
+      const lowStock = p.stock <= 5;
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <div class="card-img-wrap">
+          <img src="${p.imagen}" alt="${p.nombre}" loading="lazy"/>
+          ${p.badge ? `<span class="card-badge">${p.badge}</span>` : p.badgeType === 'new' ? '<span class="card-badge new">Nuevo</span>' : ''}
+          ${lowStock ? '<span class="card-badge" style="top:auto;bottom:0.8rem;background:#f39c12">Últimas unidades</span>' : ''}
+          <button class="card-wish ${isWished ? 'active' : ''}" onclick="toggleCardWish(event,${p.id})">${isWished ? '♥' : '♡'}</button>
+        </div>
+        <div class="card-body">
+          <p class="card-brand">${p.marca}</p>
+          <p class="card-name">${p.nombre}</p>
+          <div class="card-colors-row">
+            ${p.colores.map(c => `<div class="card-color-dot" style="background:${c.hex}" title="${c.nombre}"></div>`).join('')}
+          </div>
+          <div class="card-price-row">
+            <span class="card-price">$${p.precio.toLocaleString('es-AR')}</span>
+            ${p.precioOriginal ? `<span class="card-price-old">$${p.precioOriginal.toLocaleString('es-AR')}</span>` : ''}
+            ${p.descuento ? `<span class="card-discount">${p.descuento}% OFF</span>` : ''}
+          </div>
+          <button class="card-btn" onclick="openDetail(${p.id})">Ver producto</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function applyFilter(btn, filter) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = filter;
+    renderGrid(filter);
+  }
+
+  function filterCat(cat) {
+    showCatalog();
+    const btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(b => {
+      b.classList.remove('active');
+      if (b.textContent.trim() === cat) { b.classList.add('active'); currentFilter = cat; }
+    });
+    renderGrid(cat);
+  }
+
+  function toggleCardWish(e, id) {
+    e.stopPropagation();
+    wished[id] = !wished[id];
+    const btn = e.currentTarget;
+    btn.textContent = wished[id] ? '♥' : '♡';
+    btn.classList.toggle('active', wished[id]);
+    showToast(wished[id] ? '♥ Guardado en favoritos' : 'Eliminado de favoritos');
+  }
+
+  // ===== DETALLE =====
+  function openDetail(id) {
+    const p = productos.find(x => x.id === id);
+    if (!p) return;
+    currentProduct = p;
+    qty = 1;
+    wishedDetail = !!wished[p.id];
+
+    document.getElementById('bc-name').textContent = p.nombre;
+    document.getElementById('d-brand').textContent = `${p.marca} — Colección Otoño 2026`;
+    document.getElementById('d-name').textContent = p.nombre;
+    document.getElementById('d-code').textContent = `VTR-${p.id.toString().padStart(4,'0')}`;
+    document.getElementById('d-price').textContent = `$${p.precio.toLocaleString('es-AR')}`;
+    document.getElementById('d-old').textContent = p.precioOriginal ? `$${p.precioOriginal.toLocaleString('es-AR')}` : '';
+    document.getElementById('d-disc').textContent = p.descuento ? `${p.descuento}% OFF` : '';
+    document.getElementById('d-desc').textContent = p.descripcion;
+    document.getElementById('qty').textContent = '1';
+
+    const badge = document.getElementById('detail-badge');
+    badge.textContent = p.badge || '';
+    badge.style.display = p.badge ? 'block' : 'none';
+
+    const dot = document.getElementById('d-stock-dot');
+    const stockEl = document.getElementById('d-stock');
+    if (p.stock === 0) { dot.className = 'stock-dot out'; stockEl.textContent = 'Sin stock'; }
+    else if (p.stock <= 5) { dot.className = 'stock-dot low'; stockEl.innerHTML = `Últimas unidades: <strong>${p.stock} disponibles</strong>`; }
+    else { dot.className = 'stock-dot'; stockEl.innerHTML = `Stock disponible: <strong>${p.stock} unidades</strong>`; }
+
+    const mainImg = document.getElementById('main-img');
+    mainImg.src = p.imagenes[0];
+    const thumbRow = document.getElementById('thumb-row');
+    thumbRow.innerHTML = '';
+    p.imagenes.forEach((src, i) => {
+      const t = document.createElement('div');
+      t.className = 'thumb' + (i === 0 ? ' active' : '');
+      t.innerHTML = `<img src="${src}" alt="Foto ${i+1}" loading="lazy"/>`;
+      t.onclick = () => {
+        document.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        mainImg.src = src;
+      };
+      thumbRow.appendChild(t);
+    });
+
+    const colorsEl = document.getElementById('d-colors');
+    colorsEl.innerHTML = '';
+    document.getElementById('selected-color').textContent = p.colores[0].nombre;
+    p.colores.forEach((c, i) => {
+      const sw = document.createElement('div');
+      sw.className = 'color-swatch' + (i === 0 ? ' selected' : '');
+      sw.style.background = c.hex;
+      sw.title = c.nombre;
+      sw.onclick = () => {
+        document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+        sw.classList.add('selected');
+        document.getElementById('selected-color').textContent = c.nombre;
+      };
+      colorsEl.appendChild(sw);
+    });
+
+    const sizesEl = document.getElementById('d-sizes');
+    sizesEl.innerHTML = '';
+    const outOfStock = p.stock === 0;
+    p.talles.forEach((t, i) => {
+      const btn = document.createElement('button');
+      const isDisabled = outOfStock || (p.talles.length > 3 && i === p.talles.length - 1 && p.stock < 3);
+      btn.className = 'size-btn' + (isDisabled ? ' disabled' : '');
+      btn.textContent = t;
+      if (!isDisabled) {
+        btn.onclick = () => {
+          document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+        };
+      } else {
+        btn.disabled = true;
+      }
+      sizesEl.appendChild(btn);
+    });
+
+    const wishBtn = document.getElementById('wish-btn-detail');
+    wishBtn.textContent = wishedDetail ? '♥' : '♡';
+    wishBtn.classList.toggle('active', wishedDetail);
+
+    document.getElementById('catalog-view').style.display = 'none';
+    const dv = document.getElementById('detail-view');
+    dv.style.display = 'block';
+    dv.style.animation = 'none';
+    dv.offsetHeight;
+    dv.style.animation = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showCatalog() {
+    document.getElementById('detail-view').style.display = 'none';
+    document.getElementById('catalog-view').style.display = 'block';
+    renderGrid(currentFilter);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function changeQty(delta) {
+    const max = currentProduct ? currentProduct.stock : 10;
+    qty = Math.max(1, Math.min(max, qty + delta));
+    document.getElementById('qty').textContent = qty;
+  }
+
+  function addToCart() {
+    const sizeSelected = document.querySelector('.size-btn.selected');
+    if (!sizeSelected) { showToast('⚠ Seleccioná un talle primero'); return; }
+    cartCount += qty;
+    document.getElementById('cart-badge').textContent = cartCount;
+    showToast(`✓ ${qty} producto${qty > 1 ? 's' : ''} agregado${qty > 1 ? 's' : ''} al carrito`);
+  }
+
+  function toggleWishDetail() {
+    wishedDetail = !wishedDetail;
+    if (currentProduct) wished[currentProduct.id] = wishedDetail;
+    const btn = document.getElementById('wish-btn-detail');
+    btn.textContent = wishedDetail ? '♥' : '♡';
+    btn.classList.toggle('active', wishedDetail);
+    showToast(wishedDetail ? '♥ Guardado en favoritos' : 'Eliminado de favoritos');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // Init
+  renderGrid('todos');
+</script>
 </body>
 </html>

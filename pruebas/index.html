@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maison Cloth — Tienda de Ropa</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="store">
+
+    <!-- HEADER -->
+    <header class="hero">
+      <div>
+        <div class="brand">Maison <span>Cloth</span></div>
+        <div class="tagline">Colección Actual · Buenos Aires</div>
+      </div>
+      <div class="tagline">Moda · Estilo · Elegancia</div>
+    </header>
+
+    <!-- NAV CATEGORÍAS -->
+    <nav class="nav" id="nav">
+      <button class="nav-btn active" data-cat="all">Todo</button>
+      <button class="nav-btn" data-cat="women's clothing">Mujer</button>
+      <button class="nav-btn" data-cat="men's clothing">Hombre</button>
+      <button class="nav-btn" data-cat="jewelery">Joyería</button>
+      <button class="nav-btn" data-cat="electronics">Accesorios Tech</button>
+    </nav>
+
+    <!-- SECCIÓN DE PRODUCTOS -->
+    <section class="products-section">
+      <div class="section-header">
+        <div class="section-title" id="section-title">Toda la Colección</div>
+        <div class="count" id="count"></div>
+      </div>
+
+      <!-- Grilla / Loading / Error se inyectan aquí -->
+      <div id="product-area">
+        <div class="loading">
+          <div class="spinner"></div>
+          <div class="loading-text">Cargando colección</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BARRA DEL CARRITO -->
+    <div class="cart-bar">
+      <div class="cart-info" id="cart-info">Carrito vacío</div>
+      <button class="cart-btn" id="cart-btn">
+        Ver carrito 🛍
+      </button>
+    </div>
+
+  </div>
+
+  <!-- MODAL (se inyecta dinámicamente) -->
+  <div id="modal-area"></div>
+
+  <!-- TOAST (se inyecta dinámicamente) -->
+  <div id="toast-area"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

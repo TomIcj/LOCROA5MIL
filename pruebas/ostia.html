@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detalle de Producto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --dark: #1a1a1a;
+      --accent: #c0392b;
+      --mid: #6b6b6b;
+      --border: #ddd4c2;
+      --white: #fff;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--cream);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2.5rem;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--mid);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--dark); }
+    .nav-icons { display: flex; gap: 1rem; align-items: center; }
+    .nav-icons button {
+      background: none; border: none; cursor: pointer; font-size: 1.2rem; color: var(--dark);
+    }
+
+    .breadcrumb {
+      padding: 1rem 2.5rem;
+      font-size: 0.8rem;
+      color: var(--mid);
+    }
+    .breadcrumb span { margin: 0 0.4rem; }
+    .breadcrumb a { color: var(--mid); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .product-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 2.5rem 4rem;
+    }
+
+    .gallery { display: flex; flex-direction: column; gap: 1rem; }
+    .main-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #e8e0d0;
+      position: relative;
+    }
+    .main-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .main-image:hover img { transform: scale(1.03); }
+    .badge {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      background: var(--accent);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+    .thumbnails { display: flex; gap: 0.7rem; }
+    .thumb {
+      width: 70px; height: 90px;
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+      background: #ddd;
+      flex-shrink: 0;
+    }
+    .thumb.active { border-color: var(--dark); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .product-info { display: flex; flex-direction: column; gap: 1.4rem; padding-top: 0.5rem; }
+    .product-brand {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--mid);
+      font-weight: 500;
+    }
+    .product-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--dark);
+    }
+    .product-code { font-size: 0.8rem; color: var(--mid); }
+    .product-code span { font-weight: 600; color: var(--dark); }
+
+    .price-row { display: flex; align-items: baseline; gap: 1rem; }
+    .price-main { font-size: 2rem; font-weight: 700; color: var(--dark); }
+    .price-old { font-size: 1rem; text-decoration: line-through; color: var(--mid); }
+    .price-discount { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
+
+    .stock-info { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500; }
+    .stock-dot { width: 8px; height: 8px; border-radius: 50%; background: #27ae60; }
+    .stock-dot.low { background: #f39c12; }
+    .stock-dot.out { background: #e74c3c; }
+
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    .description-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--mid);
+      font-weight: 600;
+    }
+    .description-text { font-size: 0.95rem; line-height: 1.7; color: #444; }
+
+    .size-section { display: flex; flex-direction: column; gap: 0.6rem; }
+    .size-header { display: flex; justify-content: space-between; align-items: center; }
+    .size-header span { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .size-guide { font-size: 0.8rem; color: var(--mid); cursor: pointer; text-decoration: underline; }
+    .sizes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .size-btn {
+      padding: 0.5rem 1.1rem;
+      border: 1.5px solid var(--border);
+      background: white;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-radius: 3px;
+      transition: all 0.15s;
+      color: var(--dark);
+    }
+    .size-btn:hover { border-color: var(--dark); }
+    .size-btn.selected { background: var(--dark); color: white; border-color: var(--dark); }
+    .size-btn.disabled { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+
+    .color-section { display: flex; flex-direction: column; gap: 0.6rem; }
+    .color-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .colors { display: flex; gap: 0.6rem; }
+    .color-swatch {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      outline: 2px solid transparent;
+      transition: outline 0.15s;
+    }
+    .color-swatch.selected { outline: 2px solid var(--dark); outline-offset: 3px; }
+
+    .qty-row { display: flex; align-items: center; gap: 1rem; }
+    .qty-label { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 36px; height: 36px;
+      background: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      color: var(--dark);
+    }
+    .qty-btn:hover { background: var(--cream); }
+    .qty-value {
+      width: 40px;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 0.4rem 0;
+      background: white;
+    }
+
+    .cta-group { display: flex; gap: 0.8rem; }
+    .btn-add {
+      flex: 1;
+      padding: 1rem;
+      background: var(--dark);
+      color: white;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.2s;
+    }
+    .btn-add:hover { background: #333; }
+    .btn-wish {
+      width: 50px; height: 50px;
+      border: 1.5px solid var(--border);
+      background: white;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-wish:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-wish.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem; right: 2rem;
+      background: var(--dark);
+      color: white;
+      padding: 0.9rem 1.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      z-index: 999;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .product-container { grid-template-columns: 1fr; gap: 1.5rem; padding: 0 1rem 3rem; }
+      .nav-links { display: none; }
+      nav { padding: 1rem 1.2rem; }
+      .breadcrumb { padding: 0.8rem 1.2rem; }
+      .product-name { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">VESTIRE</a>
+  <ul class="nav-links">
+    <li><a href="#">Mujer</a></li>
+    <li><a href="#">Hombre</a></li>
+    <li><a href="#">Accesorios</a></li>
+    <li><a href="#">Ofertas</a></li>
+  </ul>
+  <div class="nav-icons">
+    <button title="Buscar">🔍</button>
+    <button title="Favoritos">♡</button>
+    <button title="Carrito">🛍 <span id="cart-count" style="font-size:0.75rem;background:var(--accent);color:white;border-radius:50%;padding:1px 5px;">0</span></button>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="#">Inicio</a><span>›</span>
+  <a href="#">Mujer</a><span>›</span>
+  <a href="#">Abrigos</a><span>›</span>
+  Blazer Oversize Camel
+</div>
+
+<div class="product-container">
+
+  <div class="gallery">
+    <div class="main-image">
+      <span class="badge">-20%</span>
+      <img id="main-img" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=700&q=80" alt="Blazer Oversize Camel"/>
+    </div>
+    <div class="thumbnails">
+      <div class="thumb active" onclick="changeImg(this, 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=700&q=80')">
+        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=60" alt="Foto 1"/>
+      </div>
+      <div class="thumb" onclick="changeImg(this, 'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=700&q=80')">
+        <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=200&q=60" alt="Foto 2"/>
+      </div>
+      <div class="thumb" onclick="changeImg(this, 'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=700&q=80')">
+        <img src="https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=200&q=60" alt="Foto 3"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-info">
+    <div class="product-brand">VESTIRE — Colección Otoño 2026</div>
+    <h1 class="product-name">Blazer Oversize Camel</h1>
+    <p class="product-code">Código: <span id="product-code">BLZ-2026-CAM</span></p>
+
+    <div class="price-row">
+      <span class="price-main">$42.999</span>
+      <span class="price-old">$53.999</span>
+      <span class="price-discount">20% OFF</span>
+    </div>
+
+    <div class="stock-info">
+      <div class="stock-dot"></div>
+      <span>Stock disponible: <strong>8 unidades</strong></span>
+    </div>
+
+    <hr class="divider"/>
+
+    <div>
+      <p class="description-label">Descripción</p>
+      <p class="description-text" style="margin-top:0.5rem">
+        Blazer oversize de corte estructurado en tono camel. Confeccionado en tela tipo paño con forro interior. Cuenta con dos bolsillos delanteros, solapa amplia y cierre con botón central. Ideal para combinar con jeans o pantalón de vestir. Acabados de calidad premium.
+      </p>
+    </div>
+
+    <div class="color-section">
+      <span class="color-label">Color: <span id="selected-color" style="font-weight:400;text-transform:none;letter-spacing:0">Camel</span></span>
+      <div class="colors">
+        <div class="color-swatch selected" style="background:#c8a876;" title="Camel" onclick="selectColor(this, 'Camel')"></div>
+        <div class="color-swatch" style="background:#2c2c2c;" title="Negro" onclick="selectColor(this, 'Negro')"></div>
+        <div class="color-swatch" style="background:#8b7355;" title="Chocolate" onclick="selectColor(this, 'Chocolate')"></div>
+      </div>
+    </div>
+
+    <div class="size-section">
+      <div class="size-header">
+        <span>Talle</span>
+        <span class="size-guide" onclick="alert('Guía de talles:\nS → busto 86cm\nM → busto 92cm\nL → busto 98cm\nXL → busto 104cm')">Guía de talles</span>
+      </div>
+      <div class="sizes">
+        <button class="size-btn" onclick="selectSize(this)">S</button>
+        <button class="size-btn" onclick="selectSize(this)">M</button>
+        <button class="size-btn" onclick="selectSize(this)">L</button>
+        <button class="size-btn disabled" disabled>XL</button>
+      </div>
+    </div>
+
+    <div class="qty-row">
+      <span class="qty-label">Cantidad</span>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-value" id="qty">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+
+    <div class="cta-group">
+      <button class="btn-add" onclick="addToCart()">🛍 Agregar al carrito</button>
+      <button class="btn-wish" id="wish-btn" title="Favoritos" onclick="toggleWish()">♡</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let qty = 1;
+  let cartCount = 0;
+  let wished = false;
+  const maxStock = 8;
+
+  function changeQty(delta) {
+    qty = Math.max(1, Math.min(maxStock, qty + delta));
+    document.getElementById('qty').textContent = qty;
+  }
+
+  function selectSize(btn) {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function selectColor(el, name) {
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('selected-color').textContent = name;
+  }
+
+  function changeImg(thumb, src) {
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+    document.getElementById('main-img').src = src;
+  }
+
+  function addToCart() {
+    const sizeSelected = document.querySelector('.size-btn.selected');
+    if (!sizeSelected) {
+      showToast('⚠ Seleccioná un talle primero');
+      return;
+    }
+    cartCount += qty;
+    document.getElementById('cart-count').textContent = cartCount;
+    showToast(`✓ ${qty} producto${qty > 1 ? 's' : ''} agregado${qty > 1 ? 's' : ''} al carrito`);
+  }
+
+  function toggleWish() {
+    wished = !wished;
+    const btn = document.getElementById('wish-btn');
+    btn.textContent = wished ? '♥' : '♡';
+    btn.classList.toggle('active', wished);
+    showToast(wished ? '♥ Guardado en favoritos' : 'Eliminado de favoritos');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>
