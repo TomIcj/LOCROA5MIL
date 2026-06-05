@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>VESTIRE — Tienda de Ropa</title>
+  <title>Luna de Tela — Tienda de Ropa</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -521,7 +521,7 @@
 <body>
 
 <nav>
-  <a class="nav-logo" onclick="showCatalog()">VESTIRE</a>
+  <a class="nav-logo" onclick="showCatalog()">Luna de Tela</a>
   <ul class="nav-links">
     <li><a onclick="filterCat('Mujer')" class="active" id="link-mujer">Mujer</a></li>
     <li><a onclick="filterCat('Hombre')" id="link-hombre">Hombre</a></li>
@@ -587,7 +587,7 @@
     </div>
 
     <div class="product-info">
-      <div class="product-brand" id="d-brand">VESTIRE — Colección Otoño 2026</div>
+      <div class="product-brand" id="d-brand">Luna de Tela — Colección Otoño 2026</div>
       <h1 class="product-name" id="d-name">Nombre del producto</h1>
       <p class="product-code">Código: <span id="d-code">XXX-0000</span></p>
 
@@ -647,7 +647,7 @@
 
 <footer>
   <div>
-    <p class="footer-brand">VESTIRE</p>
+    <p class="footer-brand">Luna de Tela</p>
     <p class="footer-tagline">Moda consciente. Diseño argentino. Prendas que hablan por vos.</p>
   </div>
   <div class="footer-col">
@@ -667,13 +667,13 @@
   </div>
   <div class="footer-col">
     <h4>Empresa</h4>
-    <a>Sobre VESTIRE</a>
+    <a>Sobre Luna de Tela</a>
     <a>Sustentabilidad</a>
     <a>Trabaja con nosotros</a>
     <a>Contacto</a>
   </div>
 </footer>
-<div class="footer-bottom">© 2026 VESTIRE — Todos los derechos reservados</div>
+<div class="footer-bottom">© 2026 Luna de Tela — Todos los derechos reservados</div>
 
 <div class="toast" id="toast"></div>
 
@@ -681,7 +681,7 @@
   // ===== DATOS =====
   const productos = [
     {
-      id: 1, nombre: "Remera Oversize Básica", marca: "VESTIRE Basics", categoria: "Unisex",
+      id: 1, nombre: "Remera Oversize Básica", marca: "Luna de Tela Basics", categoria: "Unisex",
       precio: 15000, precioOriginal: null, descuento: null,
       talles: ["XS","S","M","L","XL"], stock: 24,
       colores: [{ nombre:"Blanco", hex:"#f0ede6" }, { nombre:"Negro", hex:"#1a1a1a" }, { nombre:"Gris", hex:"#9e9e9e" }],
@@ -695,7 +695,7 @@
       badge: null, badgeType: "new"
     },
     {
-      id: 2, nombre: "Pantalón Cargo Wide Leg", marca: "VESTIRE Street", categoria: "Mujer",
+      id: 2, nombre: "Pantalón Cargo Wide Leg", marca: "Luna de Tela Street", categoria: "Mujer",
       precio: 32000, precioOriginal: null, descuento: null,
       talles: ["38","40","42","44","46"], stock: 12,
       colores: [{ nombre:"Verde Militar", hex:"#556b2f" }, { nombre:"Negro", hex:"#1a1a1a" }, { nombre:"Beige", hex:"#c8b89a" }],
@@ -709,7 +709,7 @@
       badge: null, badgeType: null
     },
     {
-      id: 3, nombre: "Buzo Hoodie con Capucha", marca: "VESTIRE Sport", categoria: "Unisex",
+      id: 3, nombre: "Buzo Hoodie con Capucha", marca: "Luna de Tela Sport", categoria: "Unisex",
       precio: 28000, precioOriginal: null, descuento: null,
       talles: ["S","M","L","XL","XXL"], stock: 5,
       colores: [{ nombre:"Azul Marino", hex:"#1a237e" }, { nombre:"Bordo", hex:"#7b1c3e" }, { nombre:"Verde Musgo", hex:"#4a5c3a" }],
@@ -723,7 +723,7 @@
       badge: null, badgeType: null
     },
     {
-      id: 4, nombre: "Blazer Oversize Camel", marca: "VESTIRE Formal", categoria: "Mujer",
+      id: 4, nombre: "Blazer Oversize Camel", marca: "Luna de Tela Formal", categoria: "Mujer",
       precio: 42999, precioOriginal: 53999, descuento: 20,
       talles: ["S","M","L"], stock: 8,
       colores: [{ nombre:"Camel", hex:"#c8a876" }, { nombre:"Negro", hex:"#2c2c2c" }, { nombre:"Chocolate", hex:"#8b7355" }],
@@ -737,7 +737,7 @@
       badge: "-20%", badgeType: "oferta"
     },
     {
-      id: 5, nombre: "Vestido Midi Floral", marca: "VESTIRE Primavera", categoria: "Mujer",
+      id: 5, nombre: "Vestido Midi Floral", marca: "Luna de Tela Primavera", categoria: "Mujer",
       precio: 36500, precioOriginal: 45000, descuento: 19,
       talles: ["XS","S","M","L"], stock: 3,
       colores: [{ nombre:"Flores Tierra", hex:"#c8956c" }, { nombre:"Flores Azul", hex:"#7b9eb5" }],
@@ -751,7 +751,7 @@
       badge: "-19%", badgeType: "oferta"
     },
     {
-      id: 6, nombre: "Jean Straight Fit", marca: "VESTIRE Denim", categoria: "Hombre",
+      id: 6, nombre: "Jean Straight Fit", marca: "Luna de Tela Denim", categoria: "Hombre",
       precio: 38000, precioOriginal: null, descuento: null,
       talles: ["28","30","32","34","36","38"], stock: 20,
       colores: [{ nombre:"Índigo", hex:"#2c3e6b" }, { nombre:"Claro", hex:"#a8c0d6" }, { nombre:"Negro", hex:"#1a1a1a" }],
@@ -765,7 +765,7 @@
       badge: null, badgeType: null
     },
     {
-      id: 7, nombre: "Camisa Lino Oversize", marca: "VESTIRE Resort", categoria: "Hombre",
+      id: 7, nombre: "Camisa Lino Oversize", marca: "Luna de Tela Resort", categoria: "Hombre",
       precio: 22000, precioOriginal: null, descuento: null,
       talles: ["S","M","L","XL"], stock: 15,
       colores: [{ nombre:"Blanco Roto", hex:"#f0e8d8" }, { nombre:"Arena", hex:"#c8b49a" }, { nombre:"Azul Cielo", hex:"#9db8d0" }],
@@ -779,7 +779,7 @@
       badge: null, badgeType: null
     },
     {
-      id: 8, nombre: "Tapado Largo Doble Faz", marca: "VESTIRE Winter", categoria: "Mujer",
+      id: 8, nombre: "Tapado Largo Doble Faz", marca: "Luna de Tela Winter", categoria: "Mujer",
       precio: 89000, precioOriginal: 112000, descuento: 21,
       talles: ["S","M","L"], stock: 4,
       colores: [{ nombre:"Camel", hex:"#c8a876" }, { nombre:"Gris Oxford", hex:"#7a7a7a" }],
@@ -882,7 +882,7 @@
     document.getElementById('bc-name').textContent = p.nombre;
     document.getElementById('d-brand').textContent = `${p.marca} — Colección Otoño 2026`;
     document.getElementById('d-name').textContent = p.nombre;
-    document.getElementById('d-code').textContent = `VTR-${p.id.toString().padStart(4,'0')}`;
+    document.getElementById('d-code').textContent = `LDT-${p.id.toString().padStart(4,'0')}`;
     document.getElementById('d-price').textContent = `$${p.precio.toLocaleString('es-AR')}`;
     document.getElementById('d-old').textContent = p.precioOriginal ? `$${p.precioOriginal.toLocaleString('es-AR')}` : '';
     document.getElementById('d-disc').textContent = p.descuento ? `${p.descuento}% OFF` : '';
