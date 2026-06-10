@@ -19,6 +19,7 @@
       --white: #fff;
       --success: #27ae60;
       --warning: #f39c12;
+      
     }
 
     body {
@@ -284,6 +285,505 @@
     }
     .card-btn:hover { background: #333; }
 
+    /* ===== CART DRAWER ===== */
+    .cart-drawer-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(2px);
+      z-index: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s;
+    }
+    .cart-drawer-overlay.open { opacity: 1; pointer-events: all; }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: 0;
+      width: 420px; max-width: 100vw;
+      height: 100vh;
+      background: var(--white);
+      z-index: 601;
+      display: flex; flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.32s cubic-bezier(.22,.68,0,1.1);
+      box-shadow: -8px 0 40px rgba(0,0,0,0.15);
+    }
+    .cart-drawer.open { transform: translateX(0); }
+
+    .drawer-head {
+      padding: 1.4rem 1.6rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .drawer-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700;
+    }
+    .drawer-close {
+      width: 34px; height: 34px;
+      background: var(--cream-dark); border: none; border-radius: 50%;
+      font-size: 1rem; cursor: pointer; color: var(--mid);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .drawer-close:hover { background: var(--border); color: var(--dark); }
+
+    .drawer-items {
+      flex: 1; overflow-y: auto;
+      padding: 1rem 1.6rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .drawer-empty {
+      text-align: center; padding: 3rem 1rem;
+      color: var(--mid); font-size: 0.9rem;
+    }
+    .drawer-empty-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+
+    .drawer-item {
+      display: flex; gap: 0.9rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .drawer-item:last-child { border-bottom: none; }
+    .drawer-item-img {
+      width: 72px; height: 90px;
+      object-fit: cover; border-radius: 3px;
+      background: var(--cream-dark); flex-shrink: 0;
+    }
+    .drawer-item-info { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+    .drawer-item-brand { font-size: 0.68rem; color: var(--mid); text-transform: uppercase; letter-spacing: 1px; }
+    .drawer-item-name { font-size: 0.9rem; font-weight: 600; line-height: 1.3; }
+    .drawer-item-meta { font-size: 0.75rem; color: var(--mid); }
+    .drawer-item-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+    .drawer-item-price { font-size: 0.95rem; font-weight: 700; }
+    .drawer-qty {
+      display: flex; align-items: center;
+      border: 1px solid var(--border); border-radius: 3px; overflow: hidden;
+    }
+    .drawer-qty button {
+      width: 26px; height: 26px; background: none; border: none;
+      cursor: pointer; font-size: 0.95rem; color: var(--dark);
+      transition: background 0.15s;
+    }
+    .drawer-qty button:hover { background: var(--cream); }
+    .drawer-qty span {
+      width: 28px; text-align: center; font-size: 0.82rem; font-weight: 600;
+      border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+    }
+    .drawer-item-remove {
+      background: none; border: none; cursor: pointer;
+      color: var(--mid); font-size: 0.85rem; padding: 2px 4px;
+      transition: color 0.15s;
+    }
+    .drawer-item-remove:hover { color: var(--accent); }
+
+    .drawer-foot {
+      padding: 1.2rem 1.6rem 1.8rem;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .drawer-subtotal {
+      display: flex; justify-content: space-between;
+      align-items: baseline; margin-bottom: 1rem;
+    }
+    .drawer-subtotal-label { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--mid); }
+    .drawer-subtotal-val { font-size: 1.3rem; font-weight: 700; }
+    .drawer-btn-checkout {
+      width: 100%; padding: 0.95rem;
+      background: var(--dark); color: white; border: none;
+      font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer; border-radius: 3px; transition: background 0.2s;
+    }
+    .drawer-btn-checkout:hover { background: #333; }
+    .drawer-btn-checkout:disabled { background: #aaa; cursor: not-allowed; }
+    .drawer-keep { width: 100%; margin-top: 0.6rem; padding: 0.7rem;
+      background: none; border: 1.5px solid var(--border);
+      font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+      color: var(--mid); cursor: pointer; border-radius: 3px; transition: all 0.15s;
+    }
+    .drawer-keep:hover { border-color: var(--dark); color: var(--dark); }
+
+    /* ===== CHECKOUT PAYMENT MODAL ===== */
+    .checkout-overlay {
+      position: fixed; inset: 0;
+      background: rgba(20,20,20,0.55);
+      backdrop-filter: blur(3px);
+      z-index: 700;
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+      animation: coFadeIn 0.25s ease;
+    }
+    .checkout-overlay.open { display: flex; }
+    @keyframes coFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .checkout-modal {
+      background: var(--white); border-radius: 6px;
+      width: 100%; max-width: 560px; max-height: 90vh;
+      overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+      animation: coSlideUp 0.3s ease; position: relative;
+    }
+    @keyframes coSlideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    .co-header {
+      padding: 1.6rem 2rem 1.2rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; background: var(--white); z-index: 2;
+    }
+    .co-header-left { display: flex; flex-direction: column; gap: 0.2rem; }
+    .co-header-eyebrow { font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--mid); font-weight: 600; }
+    .co-header-title { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 700; color: var(--dark); }
+    .co-close {
+      width: 36px; height: 36px; background: var(--cream-dark); border: none; border-radius: 50%;
+      cursor: pointer; font-size: 1.1rem; color: var(--mid);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s; flex-shrink: 0;
+    }
+    .co-close:hover { background: var(--border); color: var(--dark); }
+    .co-steps {
+      display: flex; padding: 1rem 2rem; border-bottom: 1px solid var(--border); background: var(--cream);
+    }
+    .co-step {
+      flex: 1; display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; font-weight: 500; color: var(--mid); letter-spacing: 0.5px;
+    }
+    .co-step.active { color: var(--dark); font-weight: 600; }
+    .co-step.done   { color: var(--success); }
+    .co-step-num {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--border); color: var(--mid);
+      font-size: 0.68rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.2s, color 0.2s;
+    }
+    .co-step.active .co-step-num { background: var(--dark); color: white; }
+    .co-step.done   .co-step-num { background: var(--success); color: white; }
+    .co-step-sep { flex: 0 0 20px; text-align: center; color: var(--border); font-size: 0.8rem; }
+    .co-body { padding: 1.6rem 2rem; display: flex; flex-direction: column; gap: 1.4rem; }
+    .co-summary-box { border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+    .co-summary-header {
+      background: var(--cream); padding: 0.7rem 1rem; font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--mid);
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none;
+    }
+    .co-summary-header:hover { background: var(--cream-dark); }
+    .co-summary-toggle { transition: transform 0.2s; display: inline-block; }
+    .co-summary-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.7rem; }
+    .co-summary-item { display: flex; justify-content: space-between; align-items: flex-start; font-size: 0.88rem; gap: 1rem; }
+    .co-summary-item-left { display: flex; gap: 0.7rem; align-items: center; }
+    .co-item-thumb { width: 48px; height: 60px; object-fit: cover; border-radius: 3px; background: var(--cream-dark); flex-shrink: 0; }
+    .co-item-meta { display: flex; flex-direction: column; gap: 0.2rem; }
+    .co-item-name { font-weight: 600; font-size: 0.85rem; line-height: 1.3; }
+    .co-item-detail { font-size: 0.75rem; color: var(--mid); }
+    .co-item-price { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+    .co-divider { border: none; border-top: 1px solid var(--border); margin: 0.2rem 0; }
+    .co-total-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem; color: var(--mid); }
+    .co-total-row.main { font-size: 1.05rem; font-weight: 700; color: var(--dark); margin-top: 0.2rem; }
+    .co-total-row.discount { color: var(--accent); }
+    .co-total-row.free { color: var(--success); }
+    .co-section-label { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--mid); margin-bottom: 0.6rem; }
+    .co-methods { display: flex; flex-direction: column; gap: 0.6rem; }
+    .co-method-card { border: 1.5px solid var(--border); border-radius: 5px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; overflow: hidden; }
+    .co-method-card:hover { border-color: #aaa; }
+    .co-method-card.selected { border-color: var(--dark); box-shadow: 0 0 0 1px var(--dark); }
+    .co-method-header { display: flex; align-items: center; gap: 0.9rem; padding: 0.95rem 1.1rem; }
+    .co-method-radio { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; }
+    .co-method-card.selected .co-method-radio { border-color: var(--dark); }
+    .co-method-radio-dot { width: 8px; height: 8px; background: var(--dark); border-radius: 50%; opacity: 0; transform: scale(0); transition: opacity 0.15s, transform 0.15s; }
+    .co-method-card.selected .co-method-radio-dot { opacity: 1; transform: scale(1); }
+    .co-method-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .co-method-text { flex: 1; }
+    .co-method-name { font-size: 0.9rem; font-weight: 600; color: var(--dark); }
+    .co-method-sub  { font-size: 0.76rem; color: var(--mid); margin-top: 0.1rem; }
+    .co-method-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 0.18rem 0.55rem; border-radius: 2px; background: #eaf7ef; color: var(--success); flex-shrink: 0; }
+    .co-method-badge.promo { background: #fdecea; color: var(--accent); }
+    .co-method-detail { display: none; padding: 0 1.1rem 1rem; border-top: 1px solid var(--border); background: var(--cream); }
+    .co-method-card.selected .co-method-detail { display: block; }
+    .co-cuotas { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; margin-top: 0.8rem; }
+    .co-cuota-btn { border: 1.5px solid var(--border); border-radius: 4px; padding: 0.55rem 0.4rem; cursor: pointer; background: white; text-align: center; transition: border-color 0.15s, background 0.15s; font-family: 'DM Sans', sans-serif; }
+    .co-cuota-btn:hover { border-color: var(--dark); }
+    .co-cuota-btn.selected { background: var(--dark); border-color: var(--dark); }
+    .co-cuota-num { font-size: 0.82rem; font-weight: 700; color: var(--dark); display: block; }
+    .co-cuota-btn.selected .co-cuota-num { color: white; }
+    .co-cuota-monto { font-size: 0.68rem; color: var(--mid); display: block; margin-top: 0.1rem; }
+    .co-cuota-btn.selected .co-cuota-monto { color: rgba(255,255,255,0.7); }
+    .co-cuota-label { font-size: 0.65rem; color: var(--success); display: block; font-weight: 600; }
+    .co-cuota-btn.selected .co-cuota-label { color: #7effa8; }
+    .co-card-fields { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.9rem; }
+    .co-field-group { display: flex; gap: 0.6rem; }
+    .co-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; }
+    .co-field label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--mid); }
+    .co-field input { border: 1.5px solid var(--border); border-radius: 4px; padding: 0.6rem 0.8rem; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; color: var(--dark); background: white; width: 100%; transition: border-color 0.15s; }
+    .co-field input:focus { outline: none; border-color: var(--dark); }
+    .co-field input::placeholder { color: #bbb; }
+    .co-card-brands { display: flex; gap: 0.5rem; margin-top: 0.6rem; flex-wrap: wrap; }
+    .co-brand-chip { border: 1.5px solid var(--border); border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.72rem; font-weight: 700; color: var(--mid); background: white; letter-spacing: 0.5px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+    .co-brand-chip.active { border-color: var(--dark); color: var(--dark); background: var(--cream); }
+    .co-transfer-box { background: white; border: 1px solid var(--border); border-radius: 4px; padding: 0.9rem 1rem; margin-top: 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; }
+    .co-transfer-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.83rem; }
+    .co-transfer-key { color: var(--mid); font-weight: 500; }
+    .co-transfer-val { font-weight: 700; color: var(--dark); font-size: 0.88rem; }
+    .co-copy-btn { background: var(--cream-dark); border: 1px solid var(--border); border-radius: 3px; padding: 0.2rem 0.55rem; font-size: 0.7rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; color: var(--mid); transition: background 0.15s; }
+    .co-copy-btn:hover { background: var(--border); color: var(--dark); }
+    .co-transfer-note { font-size: 0.75rem; color: var(--mid); padding-top: 0.4rem; border-top: 1px solid var(--border); line-height: 1.5; }
+    .co-mp-box { margin-top: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; padding: 1.2rem; background: white; border: 1px solid var(--border); border-radius: 4px; text-align: center; }
+    .co-qr-placeholder { width: 120px; height: 120px; border: 2px solid var(--border); border-radius: 4px; background: var(--cream-dark); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+    .co-mp-note { font-size: 0.78rem; color: var(--mid); line-height: 1.5; max-width: 260px; }
+    .co-mp-btn { display: inline-block; padding: 0.65rem 1.5rem; background: #009ee3; color: white; border: none; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s; }
+    .co-mp-btn:hover { background: #0084be; }
+    .co-footer { padding: 1.2rem 2rem 1.8rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.8rem; }
+    .co-btn-pay { width: 100%; padding: 1rem; background: var(--dark); color: white; border: none; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+    .co-btn-pay:hover { background: #333; }
+    .co-btn-pay:disabled { background: #aaa; cursor: not-allowed; }
+    .co-secure-note { display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.74rem; color: var(--mid); }
+    .co-success { display: none; flex-direction: column; align-items: center; text-align: center; padding: 3rem 2rem; gap: 1rem; }
+    .co-success.show { display: flex; }
+    .co-success-icon { width: 70px; height: 70px; background: #eaf7ef; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    .co-success-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--dark); }
+    .co-success-sub { font-size: 0.88rem; color: var(--mid); line-height: 1.6; max-width: 320px; }
+    .co-success-order { font-size: 0.78rem; color: var(--mid); }
+    .co-success-order strong { color: var(--dark); }
+    .co-btn-continue { margin-top: 0.5rem; padding: 0.85rem 2rem; background: var(--dark); color: white; border: none; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: background 0.2s; }
+    .co-btn-continue:hover { background: #333; }
+    @media (max-width: 600px) {
+      .checkout-modal { max-height: 95vh; border-radius: 10px 10px 0 0; align-self: flex-end; }
+      .checkout-overlay { align-items: flex-end; padding: 0; }
+      .co-cuotas { grid-template-columns: repeat(2,1fr); }
+      .cart-drawer { width: 100vw; }
+    }
+
+    /* ===== AUTH MODAL ===== */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .auth-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .auth-modal {
+      background: var(--white);
+      width: 100%;
+      max-width: 440px;
+      border-radius: 6px;
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: transform 0.28s cubic-bezier(.22,.68,0,1.2);
+      position: relative;
+    }
+    .auth-overlay.open .auth-modal {
+      transform: translateY(0);
+    }
+    .auth-modal-header {
+      background: var(--dark);
+      padding: 2rem 2.5rem 1.5rem;
+      position: relative;
+    }
+    .auth-modal-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--cream);
+    }
+    .auth-modal-sub {
+      font-size: 0.78rem;
+      color: #aaa;
+      margin-top: 0.3rem;
+      letter-spacing: 0.5px;
+    }
+    .auth-close {
+      position: absolute;
+      top: 1rem; right: 1.2rem;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .auth-close:hover { color: white; }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 0.9rem;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: var(--mid);
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      color: var(--dark);
+      border-bottom-color: var(--dark);
+    }
+    .auth-body {
+      padding: 2rem 2.5rem;
+    }
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+    .auth-field {
+      margin-bottom: 1.2rem;
+    }
+    .auth-field label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--mid);
+      margin-bottom: 0.45rem;
+    }
+    .auth-field input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      background: var(--cream);
+      color: var(--dark);
+      transition: border-color 0.2s, background 0.2s;
+      outline: none;
+    }
+    .auth-field input:focus {
+      border-color: var(--dark);
+      background: white;
+    }
+    .auth-field input.error {
+      border-color: var(--accent);
+      background: #fdecea;
+    }
+    .auth-field-error {
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-top: 0.3rem;
+      display: none;
+    }
+    .auth-field-error.show { display: block; }
+    .auth-submit {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--dark);
+      color: white;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+    .auth-submit:hover { background: #333; }
+    .auth-submit:active { background: #111; }
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 1.3rem 0;
+      color: var(--mid);
+      font-size: 0.75rem;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: '';
+      flex: 1;
+      border-top: 1px solid var(--border);
+    }
+    .auth-switch {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--mid);
+      margin-top: 1.2rem;
+    }
+    .auth-switch a {
+      color: var(--dark);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    /* NAV user state */
+    .nav-user-btn {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 2rem;
+      padding: 0.35rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      color: var(--dark);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .nav-user-btn:hover {
+      background: var(--dark);
+      color: white;
+      border-color: var(--dark);
+    }
+    .nav-user-btn.logged {
+      border-color: var(--dark);
+      background: var(--dark);
+      color: white;
+    }
+    .nav-user-btn.logged:hover {
+      background: #333;
+    }
+    .user-dropdown {
+      position: relative;
+    }
+    .user-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      min-width: 180px;
+      overflow: hidden;
+      display: none;
+      z-index: 300;
+    }
+    .user-dropdown-menu.open { display: block; }
+    .user-dropdown-name {
+      padding: 0.8rem 1.1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--dark);
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+    }
+    .user-dropdown-item {
+      display: block;
+      padding: 0.7rem 1.1rem;
+      font-size: 0.82rem;
+      color: var(--mid);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .user-dropdown-item:hover { background: var(--cream); color: var(--dark); }
+    .user-dropdown-item.logout { color: var(--accent); }
+    .user-dropdown-item.logout:hover { background: #fdecea; }
+
     /* ===== DETAIL VIEW ===== */
     .breadcrumb {
       padding: 1rem 3rem;
@@ -531,10 +1031,19 @@
   <div class="nav-icons">
     <button title="Buscar">🔍</button>
     <button title="Favoritos">♡</button>
-    <button title="Carrito" style="position:relative;" onclick="showToast('Carrito: ' + cartCount + ' producto(s)')">
+    <button title="Carrito" style="position:relative;" onclick="openCartDrawer()">
       🛍
       <span id="cart-badge">0</span>
     </button>
+    <div class="user-dropdown" id="user-dropdown">
+      <button class="nav-user-btn" id="nav-auth-btn" onclick="handleAuthNavClick()">Iniciar sesión</button>
+      <div class="user-dropdown-menu" id="user-dropdown-menu">
+        <div class="user-dropdown-name" id="user-dropdown-name">—</div>
+        <span class="user-dropdown-item" onclick="showToast('👤 Mi cuenta — próximamente'); closeUserDropdown()">👤 Mi cuenta</span>
+        <span class="user-dropdown-item" onclick="showToast('📦 Mis pedidos — próximamente'); closeUserDropdown()">📦 Mis pedidos</span>
+        <span class="user-dropdown-item logout" onclick="logout()">Cerrar sesión</span>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -676,6 +1185,228 @@
 <div class="footer-bottom">© 2026 Luna de Tela — Todos los derechos reservados</div>
 
 <div class="toast" id="toast"></div>
+
+<!-- ===== CART DRAWER ===== -->
+<div class="cart-drawer-overlay" id="cart-drawer-overlay" onclick="closeCartDrawer()"></div>
+<div class="cart-drawer" id="cart-drawer">
+  <div class="drawer-head">
+    <span class="drawer-title">Tu Carrito <span id="drawer-count" style="font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:400;color:var(--mid)"></span></span>
+    <button class="drawer-close" onclick="closeCartDrawer()">✕</button>
+  </div>
+  <div class="drawer-items" id="drawer-items">
+    <div class="drawer-empty">
+      <div class="drawer-empty-icon">🛍</div>
+      <p>Tu carrito está vacío.<br/>Agregá productos para comenzar.</p>
+    </div>
+  </div>
+  <div class="drawer-foot" id="drawer-foot" style="display:none">
+    <div class="drawer-subtotal">
+      <span class="drawer-subtotal-label">Subtotal</span>
+      <span class="drawer-subtotal-val" id="drawer-subtotal">$0</span>
+    </div>
+    <button class="drawer-btn-checkout" onclick="tryCheckout()">Finalizar compra →</button>
+    <button class="drawer-keep" onclick="closeCartDrawer()">Seguir comprando</button>
+  </div>
+</div>
+
+<!-- ===== CHECKOUT PAYMENT MODAL ===== -->
+<div class="checkout-overlay" id="checkout-overlay" onclick="handleCheckoutOverlayClick(event)">
+  <div class="checkout-modal" id="checkout-modal">
+    <div class="co-header">
+      <div class="co-header-left">
+        <span class="co-header-eyebrow">Luna de Tela</span>
+        <span class="co-header-title">Finalizar compra</span>
+      </div>
+      <button class="co-close" onclick="closeCheckout()" title="Cerrar">✕</button>
+    </div>
+    <div class="co-steps">
+      <div class="co-step done" id="step-carrito"><div class="co-step-num">✓</div><span>Carrito</span></div>
+      <div class="co-step-sep">›</div>
+      <div class="co-step active" id="step-pago"><div class="co-step-num">2</div><span>Pago</span></div>
+      <div class="co-step-sep">›</div>
+      <div class="co-step" id="step-confirmacion"><div class="co-step-num">3</div><span>Confirmación</span></div>
+    </div>
+    <div id="co-pay-screen">
+      <div class="co-body">
+        <div class="co-summary-box">
+          <div class="co-summary-header" onclick="toggleCoSummary()">
+            <span>Ver resumen del pedido</span>
+            <span class="co-summary-toggle" id="co-summary-toggle">▾</span>
+          </div>
+          <div class="co-summary-body" id="co-summary-body"></div>
+        </div>
+        <div>
+          <p class="co-section-label">Elegí tu método de pago</p>
+          <div class="co-methods">
+            <div class="co-method-card" id="method-credito" onclick="selectMethod('credito')">
+              <div class="co-method-header">
+                <div class="co-method-radio"><div class="co-method-radio-dot"></div></div>
+                <span class="co-method-icon">💳</span>
+                <div class="co-method-text"><div class="co-method-name">Tarjeta de crédito</div><div class="co-method-sub">Visa, Mastercard, Amex, Naranja X</div></div>
+                <span class="co-method-badge">Hasta 12 cuotas</span>
+              </div>
+              <div class="co-method-detail">
+                <div class="co-card-brands" id="credito-brands">
+                  <div class="co-brand-chip active" onclick="selectBrand(event,'VISA')">VISA</div>
+                  <div class="co-brand-chip" onclick="selectBrand(event,'MC')">MC</div>
+                  <div class="co-brand-chip" onclick="selectBrand(event,'AMEX')">AMEX</div>
+                  <div class="co-brand-chip" onclick="selectBrand(event,'NX')">NARANJA X</div>
+                </div>
+                <div class="co-card-fields">
+                  <div class="co-field"><label>Número de tarjeta</label><input type="text" id="cc-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"/></div>
+                  <div class="co-field"><label>Nombre en la tarjeta</label><input type="text" id="cc-name" placeholder="Como figura en la tarjeta"/></div>
+                  <div class="co-field-group">
+                    <div class="co-field"><label>Vencimiento</label><input type="text" id="cc-exp" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)"/></div>
+                    <div class="co-field"><label>CVV</label><input type="text" id="cc-cvv" placeholder="123" maxlength="4"/></div>
+                  </div>
+                </div>
+                <div style="margin-top:1rem"><p class="co-section-label" style="margin-bottom:0.5rem">Cuotas</p><div class="co-cuotas" id="cuotas-credito"></div></div>
+              </div>
+            </div>
+            <div class="co-method-card" id="method-debito" onclick="selectMethod('debito')">
+              <div class="co-method-header">
+                <div class="co-method-radio"><div class="co-method-radio-dot"></div></div>
+                <span class="co-method-icon">💳</span>
+                <div class="co-method-text"><div class="co-method-name">Tarjeta de débito</div><div class="co-method-sub">Débito inmediato desde tu cuenta</div></div>
+              </div>
+              <div class="co-method-detail">
+                <div class="co-card-brands"><div class="co-brand-chip active">VISA Débito</div><div class="co-brand-chip">Maestro</div><div class="co-brand-chip">Cabal</div></div>
+                <div class="co-card-fields">
+                  <div class="co-field"><label>Número de tarjeta</label><input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"/></div>
+                  <div class="co-field"><label>Nombre en la tarjeta</label><input type="text" placeholder="Como figura en la tarjeta"/></div>
+                  <div class="co-field-group">
+                    <div class="co-field"><label>Vencimiento</label><input type="text" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)"/></div>
+                    <div class="co-field"><label>CVV</label><input type="text" placeholder="123" maxlength="4"/></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="co-method-card" id="method-mp" onclick="selectMethod('mp')">
+              <div class="co-method-header">
+                <div class="co-method-radio"><div class="co-method-radio-dot"></div></div>
+                <span class="co-method-icon">📱</span>
+                <div class="co-method-text"><div class="co-method-name">Mercado Pago</div><div class="co-method-sub">QR, billetera virtual o link de pago</div></div>
+                <span class="co-method-badge">Hasta 6 cuotas</span>
+              </div>
+              <div class="co-method-detail">
+                <div class="co-mp-box">
+                  <div class="co-qr-placeholder">📲</div>
+                  <p class="co-mp-note">Escaneá el código QR con la app de Mercado Pago o hacé clic para ir al link de pago seguro.</p>
+                  <button class="co-mp-btn" onclick="showToast('Redirigiendo a Mercado Pago…')">Pagar con MP</button>
+                </div>
+              </div>
+            </div>
+            <div class="co-method-card" id="method-transferencia" onclick="selectMethod('transferencia')">
+              <div class="co-method-header">
+                <div class="co-method-radio"><div class="co-method-radio-dot"></div></div>
+                <span class="co-method-icon">🏦</span>
+                <div class="co-method-text"><div class="co-method-name">Transferencia bancaria</div><div class="co-method-sub">CBU / Alias — acreditación en 24 hs</div></div>
+                <span class="co-method-badge promo">5% OFF</span>
+              </div>
+              <div class="co-method-detail">
+                <div class="co-transfer-box">
+                  <div class="co-transfer-row"><span class="co-transfer-key">Banco</span><span class="co-transfer-val">Galicia</span></div>
+                  <div class="co-transfer-row"><span class="co-transfer-key">Titular</span><span class="co-transfer-val">Luna de Tela S.R.L.</span></div>
+                  <div class="co-transfer-row"><span class="co-transfer-key">CBU</span><div style="display:flex;align-items:center;gap:0.5rem"><span class="co-transfer-val" id="co-cbu">0070999-20000001234567</span><button class="co-copy-btn" onclick="copyText('co-cbu',this)">Copiar</button></div></div>
+                  <div class="co-transfer-row"><span class="co-transfer-key">Alias</span><div style="display:flex;align-items:center;gap:0.5rem"><span class="co-transfer-val" id="co-alias">LUNA.TELA.PAGO</span><button class="co-copy-btn" onclick="copyText('co-alias',this)">Copiar</button></div></div>
+                  <p class="co-transfer-note">⚠ Una vez realizada la transferencia, envianos el comprobante a <strong>pagos@lunadetela.com.ar</strong>. Tu pedido se reserva por <strong>48 horas</strong>.</p>
+                </div>
+              </div>
+            </div>
+            <div class="co-method-card" id="method-efectivo" onclick="selectMethod('efectivo')">
+              <div class="co-method-header">
+                <div class="co-method-radio"><div class="co-method-radio-dot"></div></div>
+                <span class="co-method-icon">💵</span>
+                <div class="co-method-text"><div class="co-method-name">Efectivo</div><div class="co-method-sub">Rapipago · Pago Fácil · Red Link</div></div>
+              </div>
+              <div class="co-method-detail">
+                <div class="co-transfer-box">
+                  <div class="co-transfer-row"><span class="co-transfer-key">Código de pago</span><div style="display:flex;align-items:center;gap:0.5rem"><span class="co-transfer-val" id="co-cod-efectivo">LDT-2026-88412</span><button class="co-copy-btn" onclick="copyText('co-cod-efectivo',this)">Copiar</button></div></div>
+                  <p class="co-transfer-note">Presentá este código en cualquier sucursal de Rapipago o Pago Fácil. Tu pedido se reserva por <strong>72 horas</strong>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="co-footer">
+        <button class="co-btn-pay" id="co-btn-pay" onclick="procesarPago()" disabled style="opacity:0.5">
+          🔒 Confirmar y pagar — <span id="co-btn-total">$0</span>
+        </button>
+        <div class="co-secure-note">🔒 Pago cifrado con SSL · Tus datos están protegidos</div>
+      </div>
+    </div>
+    <div class="co-success" id="co-success-screen">
+      <div class="co-success-icon">✅</div>
+      <p class="co-success-title">¡Compra confirmada!</p>
+      <p class="co-success-sub">Tu pedido fue procesado exitosamente. Recibirás un email con el detalle y el seguimiento de tu envío.</p>
+      <p class="co-success-order">Número de orden: <strong id="co-order-num">#LDT-000000</strong></p>
+      <button class="co-btn-continue" onclick="closeCheckout()">Seguir comprando</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
+  <div class="auth-modal">
+    <div class="auth-modal-header">
+      <div class="auth-modal-logo">Luna de Tela</div>
+      <div class="auth-modal-sub" id="auth-modal-sub">Accedé a tu cuenta para disfrutar todos los beneficios</div>
+      <button class="auth-close" onclick="closeAuthModal()">×</button>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Iniciar sesión</button>
+      <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Registrarse</button>
+    </div>
+    <div class="auth-body">
+
+      <!-- LOGIN -->
+      <div class="auth-panel active" id="panel-login">
+        <div class="auth-field">
+          <label>Correo electrónico</label>
+          <input type="email" id="login-email" placeholder="hola@ejemplo.com" oninput="clearFieldError(this)"/>
+          <div class="auth-field-error" id="login-email-err">Ingresá un email válido.</div>
+        </div>
+        <div class="auth-field">
+          <label>Contraseña</label>
+          <input type="password" id="login-pass" placeholder="Tu contraseña" oninput="clearFieldError(this)"/>
+          <div class="auth-field-error" id="login-pass-err">Ingresá tu contraseña.</div>
+        </div>
+        <div class="auth-field-error show" id="login-general-err" style="margin-bottom:0.6rem;display:none"></div>
+        <button class="auth-submit" onclick="doLogin()">Ingresar</button>
+        <div class="auth-switch">¿No tenés cuenta? <a onclick="switchTab('register')">Registrate acá</a></div>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="auth-panel" id="panel-register">
+        <div class="auth-field">
+          <label>Nombre completo</label>
+          <input type="text" id="reg-name" placeholder="María García" oninput="clearFieldError(this)"/>
+          <div class="auth-field-error" id="reg-name-err">Ingresá tu nombre.</div>
+        </div>
+        <div class="auth-field">
+          <label>Correo electrónico</label>
+          <input type="email" id="reg-email" placeholder="hola@ejemplo.com" oninput="clearFieldError(this)"/>
+          <div class="auth-field-error" id="reg-email-err">Ingresá un email válido.</div>
+        </div>
+        <div class="auth-field">
+          <label>Contraseña</label>
+          <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" oninput="clearFieldError(this)"/>
+          <div class="auth-field-error" id="reg-pass-err">La contraseña debe tener al menos 6 caracteres.</div>
+        </div>
+        <div class="auth-field">
+          <label>Confirmar contraseña</label>
+          <input type="password" id="reg-pass2" placeholder="Repetí tu contraseña" oninput="clearFieldError(this)"/>
+          <div class="auth-field-error" id="reg-pass2-err">Las contraseñas no coinciden.</div>
+        </div>
+        <div class="auth-field-error" id="reg-general-err" style="margin-bottom:0.6rem;display:none"></div>
+        <button class="auth-submit" onclick="doRegister()">Crear cuenta</button>
+        <div class="auth-switch">¿Ya tenés cuenta? <a onclick="switchTab('login')">Iniciá sesión</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <script>
   // ===== DATOS =====
@@ -976,12 +1707,315 @@
     document.getElementById('qty').textContent = qty;
   }
 
+  // ===== CART STATE =====
+  let cartItems = []; // { id, nombre, marca, talle, color, imagen, precio, qty, stock }
+
   function addToCart() {
     const sizeSelected = document.querySelector('.size-btn.selected');
     if (!sizeSelected) { showToast('⚠ Seleccioná un talle primero'); return; }
-    cartCount += qty;
-    document.getElementById('cart-badge').textContent = cartCount;
+    if (!currentProduct) return;
+
+    const talle = sizeSelected.textContent;
+    const color = document.getElementById('selected-color')?.textContent || '—';
+    const existing = cartItems.find(i => i.id === currentProduct.id && i.talle === talle && i.color === color);
+
+    if (existing) {
+      const newQty = Math.min(existing.qty + qty, currentProduct.stock);
+      existing.qty = newQty;
+    } else {
+      cartItems.push({
+        id: currentProduct.id,
+        nombre: currentProduct.nombre,
+        marca: currentProduct.marca,
+        talle, color,
+        imagen: currentProduct.imagenes[0],
+        precio: currentProduct.precio,
+        qty: qty,
+        stock: currentProduct.stock
+      });
+    }
+
+    updateCartBadge();
+    renderDrawer();
     showToast(`✓ ${qty} producto${qty > 1 ? 's' : ''} agregado${qty > 1 ? 's' : ''} al carrito`);
+    setTimeout(() => openCartDrawer(), 400);
+  }
+
+  function updateCartBadge() {
+    cartCount = cartItems.reduce((s, i) => s + i.qty, 0);
+    document.getElementById('cart-badge').textContent = cartCount;
+  }
+
+  // ===== CART DRAWER =====
+  function openCartDrawer() {
+    renderDrawer();
+    document.getElementById('cart-drawer-overlay').classList.add('open');
+    document.getElementById('cart-drawer').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCartDrawer() {
+    document.getElementById('cart-drawer-overlay').classList.remove('open');
+    document.getElementById('cart-drawer').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function renderDrawer() {
+    const container = document.getElementById('drawer-items');
+    const foot = document.getElementById('drawer-foot');
+    const countEl = document.getElementById('drawer-count');
+
+    if (cartItems.length === 0) {
+      container.innerHTML = `<div class="drawer-empty"><div class="drawer-empty-icon">🛍</div><p>Tu carrito está vacío.<br/>Agregá productos para comenzar.</p></div>`;
+      foot.style.display = 'none';
+      countEl.textContent = '';
+      return;
+    }
+
+    const total = cartItems.reduce((s, i) => s + i.precio * i.qty, 0);
+    countEl.textContent = `(${cartItems.reduce((s,i)=>s+i.qty,0)} item${cartItems.reduce((s,i)=>s+i.qty,0)>1?'s':''})`;
+    document.getElementById('drawer-subtotal').textContent = `$${total.toLocaleString('es-AR')}`;
+    foot.style.display = 'block';
+
+    container.innerHTML = '';
+    cartItems.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'drawer-item';
+      div.innerHTML = `
+        <img class="drawer-item-img" src="${item.imagen}" alt="${item.nombre}"/>
+        <div class="drawer-item-info">
+          <span class="drawer-item-brand">${item.marca}</span>
+          <span class="drawer-item-name">${item.nombre}</span>
+          <span class="drawer-item-meta">Talle: ${item.talle} · Color: ${item.color}</span>
+          <div class="drawer-item-row">
+            <div class="drawer-qty">
+              <button onclick="drawerChangeQty(${idx},-1)">−</button>
+              <span>${item.qty}</span>
+              <button onclick="drawerChangeQty(${idx},1)">+</button>
+            </div>
+            <span class="drawer-item-price">$${(item.precio * item.qty).toLocaleString('es-AR')}</span>
+            <button class="drawer-item-remove" onclick="drawerRemove(${idx})" title="Eliminar">✕</button>
+          </div>
+        </div>`;
+      container.appendChild(div);
+    });
+  }
+
+  function drawerChangeQty(idx, delta) {
+    cartItems[idx].qty = Math.max(1, Math.min(cartItems[idx].stock, cartItems[idx].qty + delta));
+    updateCartBadge();
+    renderDrawer();
+  }
+
+  function drawerRemove(idx) {
+    const name = cartItems[idx].nombre;
+    cartItems.splice(idx, 1);
+    updateCartBadge();
+    renderDrawer();
+    showToast(`"${name}" eliminado del carrito`);
+  }
+
+  // ===== CHECKOUT PAYMENT MODAL =====
+  let coSelectedMethod = null;
+  let coSelectedCuota  = 1;
+  let coSummaryOpen    = true;
+
+  function tryCheckout() {
+    closeCartDrawer();
+    if (!currentUser) {
+      showToast('⚠ Iniciá sesión para continuar con la compra');
+      setTimeout(() => openAuthModal('login'), 500);
+      return;
+    }
+    openCheckout();
+  }
+
+  function openCheckout() {
+    if (cartItems.length === 0) { showToast('⚠ Tu carrito está vacío'); return; }
+    buildCoSummary();
+    updatePayBtn();
+    document.getElementById('co-success-screen').classList.remove('show');
+    document.getElementById('co-pay-screen').style.display = 'block';
+    document.getElementById('step-confirmacion').classList.remove('active','done');
+    document.getElementById('step-pago').classList.remove('done');
+    document.getElementById('step-pago').classList.add('active');
+    document.getElementById('step-pago').querySelector('.co-step-num').textContent = '2';
+    document.getElementById('checkout-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCheckout() {
+    document.getElementById('checkout-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    coSelectedMethod = null;
+    document.querySelectorAll('.co-method-card').forEach(c => c.classList.remove('selected'));
+    updatePayBtn();
+  }
+
+  function handleCheckoutOverlayClick(e) {
+    if (e.target === document.getElementById('checkout-overlay')) closeCheckout();
+  }
+
+  function buildCoSummary() {
+    const body = document.getElementById('co-summary-body');
+    let subtotal = 0;
+    let html = '';
+
+    cartItems.forEach(item => {
+      const lineTotal = item.precio * item.qty;
+      subtotal += lineTotal;
+      html += `
+        <div class="co-summary-item">
+          <div class="co-summary-item-left">
+            <img class="co-item-thumb" src="${item.imagen}" alt="${item.nombre}"/>
+            <div class="co-item-meta">
+              <span class="co-item-name">${item.nombre}</span>
+              <span class="co-item-detail">${item.marca}</span>
+              <span class="co-item-detail">Talle: ${item.talle} · Color: ${item.color} · Cant: ${item.qty}</span>
+            </div>
+          </div>
+          <span class="co-item-price">$${lineTotal.toLocaleString('es-AR')}</span>
+        </div>`;
+    });
+
+    const envio = subtotal >= 30000 ? 0 : 3500;
+    const descuento = coSelectedMethod === 'transferencia' ? Math.round(subtotal * 0.05) : 0;
+    const total = subtotal - descuento + envio;
+
+    html += `<hr class="co-divider"/>`;
+    html += `<div class="co-total-row"><span>Subtotal</span><span>$${subtotal.toLocaleString('es-AR')}</span></div>`;
+    if (descuento) html += `<div class="co-total-row discount"><span>Descuento transferencia (5%)</span><span>-$${descuento.toLocaleString('es-AR')}</span></div>`;
+    html += envio === 0
+      ? `<div class="co-total-row free"><span>Envío</span><span>Gratis 🚚</span></div>`
+      : `<div class="co-total-row"><span>Envío</span><span>$${envio.toLocaleString('es-AR')}</span></div>`;
+    html += `<div class="co-total-row main"><span>Total</span><span>$${total.toLocaleString('es-AR')}</span></div>`;
+    body.innerHTML = html;
+    buildCuotas(total);
+    document.getElementById('co-btn-total').textContent = `$${total.toLocaleString('es-AR')}`;
+    return total;
+  }
+
+  function toggleCoSummary() {
+    coSummaryOpen = !coSummaryOpen;
+    const body = document.getElementById('co-summary-body');
+    const toggle = document.getElementById('co-summary-toggle');
+    body.style.display = coSummaryOpen ? '' : 'none';
+    toggle.textContent = coSummaryOpen ? '▴' : '▾';
+  }
+
+  function getCoTotal() {
+    const subtotal = cartItems.reduce((s, i) => s + i.precio * i.qty, 0);
+    const descuento = coSelectedMethod === 'transferencia' ? Math.round(subtotal * 0.05) : 0;
+    const envio = subtotal >= 30000 ? 0 : 3500;
+    return subtotal - descuento + envio;
+  }
+
+  function buildCuotas(total) {
+    const planes = [
+      { n:1,  label:'1 pago',    interes:0    },
+      { n:3,  label:'3 cuotas',  interes:0    },
+      { n:6,  label:'6 cuotas',  interes:0.08 },
+      { n:9,  label:'9 cuotas',  interes:0.15 },
+      { n:12, label:'12 cuotas', interes:0.22 },
+      { n:18, label:'18 cuotas', interes:0.35 },
+    ];
+    const wrap = document.getElementById('cuotas-credito');
+    if (!wrap) return;
+    wrap.innerHTML = planes.map(p => {
+      const tot = total * (1 + p.interes);
+      const cuota = (tot / p.n).toLocaleString('es-AR', {maximumFractionDigits:0});
+      const sin = p.interes === 0;
+      return `<div class="co-cuota-btn ${p.n === coSelectedCuota ? 'selected' : ''}" onclick="selectCuota(${p.n},event)">
+        <span class="co-cuota-num">${p.label}</span>
+        <span class="co-cuota-monto">$${cuota}/mes</span>
+        ${sin ? '<span class="co-cuota-label">Sin interés</span>' : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function selectCuota(n, e) {
+    coSelectedCuota = n;
+    buildCuotas(getCoTotal());
+  }
+
+  function selectMethod(id) {
+    coSelectedMethod = id;
+    document.querySelectorAll('.co-method-card').forEach(c => c.classList.toggle('selected', c.id === 'method-' + id));
+    buildCoSummary();
+    updatePayBtn();
+  }
+
+  function selectBrand(e, brand) {
+    e.stopPropagation();
+    const wrap = e.currentTarget.closest('.co-card-brands');
+    wrap.querySelectorAll('.co-brand-chip').forEach(c => c.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+  }
+
+  function updatePayBtn() {
+    const btn = document.getElementById('co-btn-pay');
+    if (!btn) return;
+    btn.disabled = !coSelectedMethod;
+    btn.style.opacity = coSelectedMethod ? '1' : '0.5';
+  }
+
+  function formatCard(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,16);
+    el.value = v.replace(/(.{4})/g,'$1 ').trim();
+  }
+
+  function formatExp(el) {
+    let v = el.value.replace(/\D/g,'').substring(0,4);
+    if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+    el.value = v;
+  }
+
+  function copyText(elId, btn) {
+    const text = document.getElementById(elId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copiado';
+      setTimeout(() => btn.textContent = orig, 1800);
+    });
+  }
+
+  function procesarPago() {
+    if (!coSelectedMethod) { showToast('⚠ Seleccioná un método de pago'); return; }
+    if (coSelectedMethod === 'credito' || coSelectedMethod === 'debito') {
+      const num  = document.getElementById('cc-number')?.value.replace(/\s/g,'') || '';
+      const name = document.getElementById('cc-name')?.value.trim() || '';
+      const exp  = document.getElementById('cc-exp')?.value || '';
+      const cvv  = document.getElementById('cc-cvv')?.value || '';
+      if (num.length < 16 || !name || exp.length < 5 || cvv.length < 3) {
+        showToast('⚠ Completá todos los datos de la tarjeta'); return;
+      }
+    }
+    const btn = document.getElementById('co-btn-pay');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Procesando…';
+
+    setTimeout(() => {
+      // Reservar stock
+      cartItems.forEach(item => {
+        const prod = productos.find(p => p.id === item.id);
+        if (prod) prod.stock = Math.max(0, prod.stock - item.qty);
+      });
+
+      const orderNum = '#LDT-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('co-order-num').textContent = orderNum;
+      document.getElementById('co-pay-screen').style.display = 'none';
+      document.getElementById('co-success-screen').classList.add('show');
+
+      document.getElementById('step-pago').classList.remove('active');
+      document.getElementById('step-pago').classList.add('done');
+      document.getElementById('step-pago').querySelector('.co-step-num').textContent = '✓';
+      document.getElementById('step-confirmacion').classList.add('active');
+
+      // Vaciar carrito
+      cartItems = [];
+      updateCartBadge();
+      renderDrawer();
+    }, 1800);
   }
 
   function toggleWishDetail() {
@@ -999,6 +2033,154 @@
     t.classList.add('show');
     clearTimeout(window._toastTimer);
     window._toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ===== AUTH SYSTEM =====
+  let users = []; // { name, email, password }
+  let currentUser = null;
+
+  function openAuthModal(tab = 'login') {
+    switchTab(tab);
+    document.getElementById('auth-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAuthModal() {
+    document.getElementById('auth-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+    clearAllErrors();
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('auth-overlay')) closeAuthModal();
+  }
+
+  function handleAuthNavClick() {
+    if (currentUser) {
+      toggleUserDropdown();
+    } else {
+      openAuthModal('login');
+    }
+  }
+
+  function toggleUserDropdown() {
+    if (!currentUser) return;
+    document.getElementById('user-dropdown-menu').classList.toggle('open');
+  }
+
+  function closeUserDropdown() {
+    document.getElementById('user-dropdown-menu').classList.remove('open');
+  }
+
+  // Close dropdown clicking outside
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('user-dropdown');
+    if (!dropdown.contains(e.target)) closeUserDropdown();
+  });
+
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('tab-login').classList.toggle('active', isLogin);
+    document.getElementById('tab-register').classList.toggle('active', !isLogin);
+    document.getElementById('panel-login').classList.toggle('active', isLogin);
+    document.getElementById('panel-register').classList.toggle('active', !isLogin);
+    document.getElementById('auth-modal-sub').textContent = isLogin
+      ? 'Accedé a tu cuenta para disfrutar todos los beneficios'
+      : 'Creá tu cuenta y empezá a comprar';
+    clearAllErrors();
+  }
+
+  function clearFieldError(input) {
+    input.classList.remove('error');
+  }
+
+  function showFieldError(inputId, errId, msg) {
+    const input = document.getElementById(inputId);
+    const err = document.getElementById(errId);
+    input.classList.add('error');
+    if (msg) err.textContent = msg;
+    err.classList.add('show');
+    err.style.display = 'block';
+  }
+
+  function clearAllErrors() {
+    document.querySelectorAll('.auth-field input').forEach(i => i.classList.remove('error'));
+    document.querySelectorAll('.auth-field-error').forEach(e => {
+      e.classList.remove('show');
+      e.style.display = 'none';
+    });
+  }
+
+  function showGeneralError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function doLogin() {
+    clearAllErrors();
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    let valid = true;
+
+    if (!isValidEmail(email)) { showFieldError('login-email', 'login-email-err', 'Ingresá un email válido.'); valid = false; }
+    if (!pass) { showFieldError('login-pass', 'login-pass-err', 'Ingresá tu contraseña.'); valid = false; }
+    if (!valid) return;
+
+    const user = users.find(u => u.email === email && u.password === pass);
+    if (!user) {
+      showGeneralError('login-general-err', '❌ Email o contraseña incorrectos.');
+      return;
+    }
+    setLoggedIn(user);
+  }
+
+  function doRegister() {
+    clearAllErrors();
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+    const pass2 = document.getElementById('reg-pass2').value;
+    let valid = true;
+
+    if (!name) { showFieldError('reg-name', 'reg-name-err', 'Ingresá tu nombre.'); valid = false; }
+    if (!isValidEmail(email)) { showFieldError('reg-email', 'reg-email-err', 'Ingresá un email válido.'); valid = false; }
+    if (pass.length < 6) { showFieldError('reg-pass', 'reg-pass-err', 'La contraseña debe tener al menos 6 caracteres.'); valid = false; }
+    if (pass !== pass2) { showFieldError('reg-pass2', 'reg-pass2-err', 'Las contraseñas no coinciden.'); valid = false; }
+    if (!valid) return;
+
+    if (users.find(u => u.email === email)) {
+      showGeneralError('reg-general-err', '❌ Ya existe una cuenta con ese email.');
+      return;
+    }
+
+    const newUser = { name, email, password: pass };
+    users.push(newUser);
+    setLoggedIn(newUser);
+  }
+
+  function setLoggedIn(user) {
+    currentUser = user;
+    const btn = document.getElementById('nav-auth-btn');
+    const firstName = user.name.split(' ')[0];
+    btn.textContent = `Hola, ${firstName} ▾`;
+    btn.classList.add('logged');
+    document.getElementById('user-dropdown-name').textContent = user.name;
+    closeAuthModal();
+    showToast(`✓ ¡Bienvenida, ${firstName}!`);
+  }
+
+  function logout() {
+    currentUser = null;
+    const btn = document.getElementById('nav-auth-btn');
+    btn.textContent = 'Iniciar sesión';
+    btn.classList.remove('logged');
+    closeUserDropdown();
+    showToast('Sesión cerrada correctamente');
   }
 
   // Init
